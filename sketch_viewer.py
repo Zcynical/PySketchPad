@@ -16,31 +16,8 @@ class SketchViewer(QWidget):
         self.scale = win_size / float(img_size)
         self.brushWidth = int(2 * self.scale)
         nc = 3
-        self.uiSketch = Canvas(img_size=img_size, scale=self.scale, nc=nc, pen_width=self.brushWidth)
-        # nc = 3
-        # self.uiSketch = UISketch(img_size=512,scale=self.scale,nc=nc,width=self.brushWidth)
-        # self.uir = UIRecorder()
-        # self.img_size = img_size
-        # self.interactive=interactive
-        # self.color = QColor(0,0,0)
-        #
+        self.canvas = Canvas(img_size=img_size, scale=self.scale, nc=nc, pen_width=self.brushWidth)
         self.rgb_color = 0
-        #
-        # self.setMouseTracking(True)
-        # self.frame_id = -1
-        # self.image_id = 0
-        # self.shadow_image=None
-        # self.move(win_size,win_size)
-        # self.pos = QPoint(0,0)
-        # self.isPressed = False
-        # self.show_ui=False #True
-        # self.moving = False
-        # self.warping = False
-        # self.warp_start = None
-        # self.warp_end = None
-        # self.warp_control_points = []
-        # self.prev_brushWidth = None
-        # self.scribbling = True
         self.show()
 
     def round_point(self, pnt):
@@ -55,10 +32,18 @@ class SketchViewer(QWidget):
 
     def mouseMoveEvent(self, event):
         self.pos = self.round_point(event.pos())
-        print(self.pos)
         if self.isPressed:
             self.points.append(self.pos)
-            self.uiSketch.update(self.points, self.rgb_color)
+            self.canvas.update(self.points, self.rgb_color)
+            self.update()
+
+    def mouseReleaseEvent(self, event):
+        self.pos = self.round_point(event.pos())
+        if self.isPressed:
+            self.points.append(self.pos)
+            self.canvas.update(self.points, self.rgb_color)
+            self.isPressed = False
+            self.points.clear()
             self.update()
 
     def paintEvent(self, event):
@@ -66,8 +51,7 @@ class SketchViewer(QWidget):
         painter.begin(self)
         painter.fillRect(event.rect(), Qt.white)
         painter.setRenderHint(QPainter.Antialiasing)
-        # #self.uiSketch.set_shadow_img(self.shadow_image)
-        im = self.uiSketch.get_img()
+        im = self.canvas.get_img()
 
         if im is not None:
             bigim = cv2.resize(im, (self.nps, self.nps))

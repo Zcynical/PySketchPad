@@ -44,15 +44,15 @@ class Canvas:
         return self.img, self.mask
 
     def get_img(self):
-        final_image = cv2.addWeighted(self.img, 0.25, self.shadow_img, 0.75, 0)
-        return final_image #self.img
+        #final_image = cv2.addWeighted(self.img, 0.25, self.shadow_img, 0.75, 0)
+        return self.img
 
     def get_draw_img(self):
         return self.img
 
-    def set_shadow_img(self,cv2_img):
+    def set_shadow_img(self, cv2_img):
         if cv2_img is not None:
-            self.shadow_img= cv2_img
+            self.shadow_img = cv2_img
 
     def show_img(self):
         cv2.imshow('ImageWindow', self.img)
